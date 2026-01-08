@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="IPTV在线直播 - 免费观看全球电视频道，支持央视、卫视、体育、电影等多种频道">
+    <meta name="keywords" content="IPTV, 直播, 电视, 在线观看, 免费电视">
+    <title>📺 IPTV Live - 在线直播电视</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📺</text></svg>">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- 背景动画 -->
+    <div class="bg-animation">
+        <div class="bg-gradient"></div>
+    </div>
+
+    <!-- 主容器 -->
+    <div class="app-container">
+        <!-- 顶部导航 -->
+        <header class="header">
+            <div class="header-left">
+                <div class="logo">
+                    <span class="logo-icon">📺</span>
+                    <span class="logo-text">IPTV Live</span>
+                </div>
+            </div>
+            <div class="header-center">
+                <div class="search-box">
+                    <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <path d="m21 21-4.35-4.35"></path>
+                    </svg>
+                    <input type="text" id="searchInput" placeholder="搜索频道..." autocomplete="off">
+                    <kbd class="search-kbd">Ctrl+K</kbd>
+                </div>
+            </div>
+            <div class="header-right">
+                <button class="btn btn-icon" id="refreshBtn" title="刷新源">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
+                        <path d="M3 3v5h5"></path>
+                        <path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"></path>
+                        <path d="M16 16h5v5"></path>
+                    </svg>
+                </button>
+                <button class="btn btn-icon" id="sourceBtn" title="数据源设置">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="3"></circle>
+                        <path d="M12 1v6m0 6v10"></path>
+                        <path d="m4.22 4.22 4.24 4.24m7.07 7.07 4.24 4.24"></path>
+                        <path d="M1 12h6m6 0h10"></path>
+                        <path d="m4.22 19.78 4.24-4.24m7.07-7.07 4.24-4.24"></path>
+                    </svg>
+                </button>
+                <button class="btn btn-icon" id="favoritesBtn" title="我的收藏">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                    </svg>
+                </button>
+            </div>
+        </header>
+
+        <!-- 主内容区 -->
+        <main class="main-content">
+            <!-- 左侧分类面板 -->
+            <aside class="sidebar">
+                <div class="sidebar-header">
+                    <h3>频道分类</h3>
+                    <span class="channel-count" id="channelCount">0 个频道</span>
+                </div>
+                <nav class="category-nav" id="categoryNav">
+                    <button class="category-item active" data-category="all">
+                        <span class="category-icon">📺</span>
+                        <span class="category-name">全部频道</span>
+                        <span class="category-count" id="countAll">0</span>
+                    </button>
+                    <button class="category-item" data-category="favorites">
+                        <span class="category-icon">⭐</span>
+                        <span class="category-name">我的收藏</span>
+                        <span class="category-count" id="countFavorites">0</span>
+                    </button>
+                    <div class="category-divider"></div>
+                    <div id="dynamicCategories">
+                        <!-- 动态加载的分类 -->
+                    </div>
+                </nav>
+                <div class="sidebar-footer">
+                    <div class="update-info">
+                        <span class="update-label">上次更新</span>
+                        <span class="update-time" id="lastUpdateTime">--</span>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- 中间播放区 -->
+            <section class="player-section">
+                <div class="player-container">
+                    <div class="player-wrapper" id="playerWrapper">
+                        <video id="videoPlayer" playsinline></video>
+                        <div class="player-overlay" id="playerOverlay">
+                            <div class="player-placeholder">
+                                <div class="placeholder-icon">📺</div>
+                                <p>选择一个频道开始观看</p>
+                            </div>
+                        </div>
+                        <div class="player-loading" id="playerLoading">
+                            <div class="loading-spinner"></div>
+                            <p>正在加载...</p>
+                        </div>
+                        <div class="player-error" id="playerError">
+                            <div class="error-icon">⚠️</div>
+                            <p id="errorMessage">播放失败</p>
+                            <button class="btn btn-primary" id="retryBtn">重试</button>
+                        </div>
+                    </div>
+                    <div class="player-controls">
+                        <div class="now-playing">
+                            <span class="live-badge">LIVE</span>
+                            <span class="channel-name" id="currentChannelName">未选择频道</span>
+                        </div>
+                        <div class="player-actions">
+                            <button class="btn btn-icon" id="favoriteCurrentBtn" title="收藏">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                                </svg>
+                            </button>
+                            <button class="btn btn-icon" id="fullscreenBtn" title="全屏">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 频道列表 -->
+                <div class="channel-grid-container">
+                    <div class="channel-grid-header">
+                        <h3 id="currentCategoryTitle">全部频道</h3>
+                        <div class="view-options">
+                            <button class="btn btn-icon btn-sm active" id="gridViewBtn" title="网格视图">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="3" y="3" width="7" height="7"></rect>
+                                    <rect x="14" y="3" width="7" height="7"></rect>
+                                    <rect x="3" y="14" width="7" height="7"></rect>
+                                    <rect x="14" y="14" width="7" height="7"></rect>
+                                </svg>
+                            </button>
+                            <button class="btn btn-icon btn-sm" id="listViewBtn" title="列表视图">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <line x1="8" y1="6" x2="21" y2="6"></line>
+                                    <line x1="8" y1="12" x2="21" y2="12"></line>
+                                    <line x1="8" y1="18" x2="21" y2="18"></line>
+                                    <line x1="3" y1="6" x2="3.01" y2="6"></line>
+                                    <line x1="3" y1="12" x2="3.01" y2="12"></line>
+                                    <line x1="3" y1="18" x2="3.01" y2="18"></line>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="channel-grid" id="channelGrid">
+                        <!-- 动态加载的频道卡片 -->
+                    </div>
+                    <div class="empty-state" id="emptyState" style="display: none;">
+                        <div class="empty-icon">📭</div>
+                        <p>没有找到频道</p>
+                        <button class="btn btn-primary" id="loadSourceBtn">加载数据源</button>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- 数据源设置模态框 -->
+    <div class="modal" id="sourceModal">
+        <div class="modal-backdrop"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>📡 数据源设置</h2>
+                <button class="btn btn-icon modal-close" id="closeSourceModal">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="source-section">
+                    <h3>预设数据源</h3>
+                    <div class="source-list" id="presetSources">
+                        <!-- 预设源列表 -->
+                    </div>
+                </div>
+                <div class="source-section">
+                    <h3>自定义数据源</h3>
+                    <p class="source-hint">输入M3U/M3U8格式的播放列表地址</p>
+                    <div class="custom-source-input">
+                        <input type="text" id="customSourceUrl" placeholder="https://example.com/playlist.m3u">
+                        <button class="btn btn-primary" id="addCustomSource">添加</button>
+                    </div>
+                    <div class="source-list" id="customSources">
+                        <!-- 自定义源列表 -->
+                    </div>
+                </div>
+                <div class="source-section">
+                    <h3>Guovin IPTV-API 配置</h3>
+                    <p class="source-hint">如果您已Fork了Guovin/iptv-api项目，请输入您的GitHub用户名</p>
+                    <div class="custom-source-input">
+                        <input type="text" id="guovinUsername" placeholder="您的GitHub用户名">
+                        <button class="btn btn-primary" id="saveGuovinConfig">保存</button>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="cancelSourceModal">取消</button>
+                <button class="btn btn-primary" id="applySourceModal">应用并刷新</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast 通知 -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- 加载HLS.js播放器库 -->
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+    <!-- 应用脚本 -->
+    <script src="js/sources.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
