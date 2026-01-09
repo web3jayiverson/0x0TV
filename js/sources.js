@@ -23,8 +23,15 @@ const IPTV_SOURCES = {
         {
             id: 'suxuang-ipv4',
             name: '📡 suxuang央视卫视',
-            url: 'https://raw.githubusercontent.com/suxuang/myIPTV/main/ipv4.m3u',
-            description: '2025年1月21日更新央视卫视',
+            url: 'https://gh-proxy.com/raw.githubusercontent.com/suxuang/myIPTV/main/ipv4.m3u',
+            description: '2025年1月21日更新央视卫视（代理加速）',
+            enabled: false
+        },
+        {
+            id: 'yuechan',
+            name: '📺 YueChan直播源',
+            url: 'https://raw.githubusercontent.com/YueChan/Live/main/IPTV.m3u',
+            description: '央视卫视直播源',
             enabled: false
         },
         {
@@ -46,6 +53,13 @@ const IPTV_SOURCES = {
             name: '📺 范明明源',
             url: 'https://live.fanmingming.com/tv/m3u/itv.m3u',
             description: '央视卫视高清源',
+            enabled: false
+        },
+        {
+            id: 'fanmingming-ipv6',
+            name: '📺 范明明源 IPv6',
+            url: 'https://live.fanmingming.cn/tv/m3u/ipv6.m3u',
+            description: '央视卫视IPv6高清源',
             enabled: false
         }
     ],
