@@ -4,34 +4,48 @@
  */
 
 const IPTV_SOURCES = {
-    // 预设数据源
+    // 预设数据源 - 选择更稳定的源
     presets: [
         {
-            id: 'iptv-org-cn',
-            name: '中国频道 (iptv-org)',
-            url: 'https://iptv-org.github.io/iptv/countries/cn.m3u',
-            description: '中国大陆电视频道',
+            id: 'fanmingming-itv',
+            name: '📺 范明明源 (推荐)',
+            url: 'https://live.fanmingming.com/tv/m3u/itv.m3u',
+            description: '央视卫视高清源，稳定性好',
             enabled: true
         },
         {
-            id: 'iptv-org-hk',
-            name: '香港频道 (iptv-org)',
-            url: 'https://iptv-org.github.io/iptv/countries/hk.m3u',
-            description: '香港电视频道',
+            id: 'suxuang-ipv4',
+            name: '📡 suxuang源 IPv4',
+            url: 'https://gh-proxy.com/raw.githubusercontent.com/suxuang/myIPTV/main/ipv4.m3u',
+            description: '手工维护的高清源，内置台标',
             enabled: false
         },
         {
-            id: 'iptv-org-tw',
-            name: '台湾频道 (iptv-org)',
-            url: 'https://iptv-org.github.io/iptv/countries/tw.m3u',
-            description: '台湾电视频道',
+            id: 'zbds-ipv4',
+            name: '🌐 每日更新源 IPv4',
+            url: 'https://live.zbds.top/tv/iptv4.m3u',
+            description: '每日自动更新，IPv4专用',
             enabled: false
         },
         {
-            id: 'iptv-org-all',
-            name: '全球频道 (iptv-org)',
-            url: 'https://iptv-org.github.io/iptv/index.m3u',
-            description: '全球电视频道（数据量大）',
+            id: 'zbds-ipv6',
+            name: '🌐 每日更新源 IPv6',
+            url: 'https://live.zbds.top/tv/iptv6.m3u',
+            description: '每日自动更新，IPv6专用',
+            enabled: false
+        },
+        {
+            id: 'lqtv',
+            name: '🎬 乐青影音',
+            url: 'https://lqtv.github.io/m3u/tv.m3u',
+            description: '全球公开频道，支持双栈',
+            enabled: false
+        },
+        {
+            id: 'iptv-org-cn',
+            name: '🌍 iptv-org 中国',
+            url: 'https://iptv-org.github.io/iptv/countries/cn.m3u',
+            description: '全球项目中国频道（备用）',
             enabled: false
         }
     ],
@@ -160,12 +174,18 @@ class SourceManager {
         try {
             const stored = localStorage.getItem(IPTV_SOURCES.storageKeys.enabledSources);
             if (stored) {
-                return JSON.parse(stored);
+                const parsed = JSON.parse(stored);
+                // 检查存储的源是否仍然有效
+                const validIds = IPTV_SOURCES.presets.map(s => s.id);
+                const validStored = parsed.filter(id => validIds.includes(id));
+                if (validStored.length > 0) {
+                    return validStored;
+                }
             }
-            // 默认启用第一个源
+            // 默认启用第一个源（范明明源）
             return IPTV_SOURCES.presets.filter(s => s.enabled).map(s => s.id);
         } catch {
-            return ['iptv-org-cn'];
+            return ['fanmingming-itv'];
         }
     }
 
@@ -228,7 +248,7 @@ class SourceManager {
      */
     getGuovinSources() {
         if (!this.guovinUsername) return [];
-        
+
         return [
             {
                 id: 'guovin-ipv4',
