@@ -684,22 +684,48 @@ class IPTVApp {
             this.hls.detachMedia();
         }
 
+        // 处理HTTP流的HTTPS代理（解决Mixed Content问题）
+        let streamUrl = url;
+        if (window.location.protocol === 'https:' && url.startsWith('http://')) {
+            // 在HTTPS页面上播放HTTP流需要使用代理
+            streamUrl = this.getProxiedUrl(url);
+            console.log('使用代理播放:', streamUrl);
+        }
+
         // 判断流类型
-        if (url.includes('.m3u8') || url.includes('m3u8')) {
+        if (streamUrl.includes('.m3u8') || streamUrl.includes('m3u8') || url.includes('.m3u8')) {
             // HLS流
             if (Hls.isSupported()) {
-                this.hls.loadSource(url);
+                this.hls.loadSource(streamUrl);
                 this.hls.attachMedia(this.video);
             } else if (this.video.canPlayType('application/vnd.apple.mpegurl')) {
                 // Safari原生支持
-                this.video.src = url;
+                this.video.src = streamUrl;
             }
         } else {
             // 其他格式，直接播放
-            this.video.src = url;
+            this.video.src = streamUrl;
             this.video.play().catch(() => { });
         }
     }
+
+    /**
+     * 获取代理URL（解决HTTPS页面播放HTTP流的问题）
+     */
+    getProxiedUrl(url) {
+        // 多个可用的HTTPS代理服务
+        const streamProxies = [
+            // 选项1: 使用公共CORS代理
+            'https://corsproxy.io/?',
+            // 选项2: 备用代理
+            'https://api.allorigins.win/raw?url='
+        ];
+
+        // 使用第一个代理
+        const proxy = streamProxies[0];
+        return proxy + encodeURIComponent(url);
+    }
+
 
     /**
      * 视频开始播放
