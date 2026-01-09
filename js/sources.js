@@ -4,48 +4,48 @@
  */
 
 const IPTV_SOURCES = {
-    // 预设数据源 - 选择更稳定的源
+    // 预设数据源 - 2025年1月最新更新
     presets: [
         {
-            id: 'fanmingming-itv',
-            name: '📺 范明明源 (推荐)',
-            url: 'https://live.fanmingming.com/tv/m3u/itv.m3u',
-            description: '央视卫视高清源，稳定性好',
+            id: 'zbds-ipv4',
+            name: '🔥 每日更新源 IPv4 (推荐)',
+            url: 'https://live.zbds.top/tv/iptv4.m3u',
+            description: '每6小时自动更新，2025年1月最新',
             enabled: true
         },
         {
-            id: 'suxuang-ipv4',
-            name: '📡 suxuang源 IPv4',
-            url: 'https://gh-proxy.com/raw.githubusercontent.com/suxuang/myIPTV/main/ipv4.m3u',
-            description: '手工维护的高清源，内置台标',
+            id: 'free-tv',
+            name: '📺 Free-TV 全球源',
+            url: 'https://raw.githubusercontent.com/Free-TV/IPTV/master/playlist.m3u8',
+            description: '全球免费频道，2025年更新',
             enabled: false
         },
         {
-            id: 'zbds-ipv4',
-            name: '🌐 每日更新源 IPv4',
-            url: 'https://live.zbds.top/tv/iptv4.m3u',
-            description: '每日自动更新，IPv4专用',
+            id: 'suxuang-ipv4',
+            name: '📡 suxuang央视卫视',
+            url: 'https://raw.githubusercontent.com/suxuang/myIPTV/main/ipv4.m3u',
+            description: '2025年1月21日更新央视卫视',
+            enabled: false
+        },
+        {
+            id: 'vbskycn',
+            name: '🌐 vbskycn直播源',
+            url: 'https://raw.githubusercontent.com/vbskycn/iptv/master/tv/iptv4.m3u',
+            description: '2025年1月更新，支持双栈',
             enabled: false
         },
         {
             id: 'zbds-ipv6',
             name: '🌐 每日更新源 IPv6',
             url: 'https://live.zbds.top/tv/iptv6.m3u',
-            description: '每日自动更新，IPv6专用',
+            description: '每6小时自动更新，IPv6专用',
             enabled: false
         },
         {
-            id: 'lqtv',
-            name: '🎬 乐青影音',
-            url: 'https://lqtv.github.io/m3u/tv.m3u',
-            description: '全球公开频道，支持双栈',
-            enabled: false
-        },
-        {
-            id: 'iptv-org-cn',
-            name: '🌍 iptv-org 中国',
-            url: 'https://iptv-org.github.io/iptv/countries/cn.m3u',
-            description: '全球项目中国频道（备用）',
+            id: 'fanmingming-itv',
+            name: '📺 范明明源',
+            url: 'https://live.fanmingming.com/tv/m3u/itv.m3u',
+            description: '央视卫视高清源',
             enabled: false
         }
     ],
@@ -185,7 +185,7 @@ class SourceManager {
             // 默认启用第一个源（范明明源）
             return IPTV_SOURCES.presets.filter(s => s.enabled).map(s => s.id);
         } catch {
-            return ['fanmingming-itv'];
+            return ['zbds-ipv4'];
         }
     }
 
