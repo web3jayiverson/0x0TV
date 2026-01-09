@@ -203,17 +203,30 @@ class IPTVApp {
      */
     initPlayer() {
         if (Hls.isSupported()) {
-            this.hls = new Hls({
+            // HLS.js配置，包含代理设置
+            const hlsConfig = {
                 enableWorker: true,
                 lowLatencyMode: true,
-                backBufferLength: 90
-            });
+                backBufferLength: 90,
+                // 自定义XHR加载器，用于代理HTTP请求
+                xhrSetup: (xhr, url) => {
+                    // 如果是HTTPS页面且请求HTTP资源，使用代理
+                    if (window.location.protocol === 'https:' && url.startsWith('http://')) {
+                        const proxyUrl = 'https://corsproxy.io/?' + encodeURIComponent(url);
+                        xhr.open('GET', proxyUrl, true);
+                    }
+                }
+            };
+
+            this.hls = new Hls(hlsConfig);
 
             this.hls.on(Hls.Events.ERROR, (event, data) => {
+                console.warn('HLS错误:', data.type, data.details);
                 if (data.fatal) {
                     switch (data.type) {
                         case Hls.ErrorTypes.NETWORK_ERROR:
                             console.error('网络错误，尝试恢复...');
+                            // 网络错误时尝试切换到备用代理
                             this.hls.startLoad();
                             break;
                         case Hls.ErrorTypes.MEDIA_ERROR:
@@ -221,7 +234,7 @@ class IPTVApp {
                             this.hls.recoverMediaError();
                             break;
                         default:
-                            this.showPlayerError('播放失败，请尝试其他频道');
+                            this.showPlayerError('播放失败，频道可能不可用');
                             break;
                     }
                 }
