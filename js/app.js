@@ -389,6 +389,12 @@ class IPTVApp {
                 // 解析频道信息
                 currentInfo = this.parseExtInf(line);
             } else if (line && !line.startsWith('#') && currentInfo) {
+                // 检查频道是否应该被过滤
+                if (this.shouldFilterChannel(currentInfo, line)) {
+                    currentInfo = null;
+                    continue;
+                }
+
                 // 这是URL行
                 const channel = {
                     id: `${sourceId}_${channels.length}`,
@@ -407,6 +413,34 @@ class IPTVApp {
 
         return channels;
     }
+
+    /**
+     * 判断频道是否应该被过滤
+     */
+    shouldFilterChannel(info, url) {
+        const name = info.name.toLowerCase();
+
+        // 过滤标记为地区限制的频道
+        if (name.includes('[geo-blocked]') || name.includes('geo-blocked')) {
+            return true;
+        }
+
+        // 过滤不在中国可用的频道标记
+        if (name.includes('[not working]') || name.includes('not working')) {
+            return true;
+        }
+
+        // 保留可能低质量但仍可尝试的频道
+        // [Not 24/7] 的频道仍然保留，只是可能不是全天候
+
+        // 过滤没有有效URL的频道
+        if (!url || url.length < 10) {
+            return true;
+        }
+
+        return false;
+    }
+
 
     /**
      * 解析EXTINF行
